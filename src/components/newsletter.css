@@ -1,0 +1,483 @@
+/* Branded newsletter styles — matched to kofc10325.org's design tokens.
+   Everything is scoped under .nl-root so it never collides with app chrome.
+   This is the single source of truth for how a published issue looks. */
+
+.nl-root {
+  /* Exact palette from kofc10325.org */
+  --navy: #112866;
+  --navy-deep: #0b1c4a;
+  --gold: #f7b718;
+  --gold-dark: #d49a00;
+  --red: #cb0e0e;
+  --blue: #0077d9;
+  --ink: #1c2433;
+  --ink-soft: #5a6478;
+  --paper: #ffffff;
+  --paper-soft: #f4f6fb;
+  --rule: #e2e7f0;
+  --card: #f4f6fb;
+  --shadow: 0 6px 24px rgba(0, 30, 90, 0.1);
+
+  /* Local aliases resolve the inherited next/font variables (set on <html>)
+     with literal fallbacks. Named differently to avoid a self-referential cycle. */
+  --nl-head: var(--font-head, "Roboto Serif", Georgia, "Times New Roman", serif);
+  --nl-body: var(--font-body, "Roboto", Arial, Helvetica, sans-serif);
+  --nl-label: var(--font-label, "Roboto Condensed", "Roboto", Arial, sans-serif);
+
+  font-family: var(--nl-body);
+  color: var(--ink);
+}
+
+.nl-sheet {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ---- Masthead (mirrors the site hero) ---- */
+.nl-masthead {
+  background:
+    radial-gradient(1100px 500px at 50% -10%, rgba(250, 165, 20, 0.18), transparent 60%),
+    linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+  color: #f4efe2;
+  padding: clamp(22px, 4vw, 34px) clamp(20px, 4vw, 44px);
+  border-bottom: 3px solid var(--gold);
+}
+.nl-crest-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.nl-crest {
+  flex: 0 0 auto;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+}
+.nl-crest img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.nl-kicker {
+  font-family: var(--nl-label);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 4px;
+}
+.nl-council {
+  margin: 0;
+  font-family: var(--nl-head);
+  font-size: clamp(24px, 4.4vw, 36px);
+  line-height: 1.05;
+  font-weight: 600;
+  color: #ffffff;
+  text-wrap: balance;
+}
+.nl-issuebar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  align-items: baseline;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(244, 239, 226, 0.18);
+  font-family: var(--nl-label);
+}
+.nl-issuebar .big {
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-weight: 700;
+}
+.nl-issuebar .muted {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: #b9c6e6;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ---- Body ---- */
+.nl-body {
+  padding: clamp(20px, 4vw, 40px) clamp(20px, 4.5vw, 48px) 40px;
+}
+.nl-h2 {
+  font-family: var(--nl-label);
+  font-size: 13px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 24px 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nl-h2::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  background: var(--red);
+  transform: rotate(45deg);
+  flex: 0 0 auto;
+}
+.nl-body > .nl-h2:first-child {
+  margin-top: 0;
+}
+.nl-body p {
+  margin: 0 0 11px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.nl-narrow p {
+  max-width: 64ch;
+}
+.nl-body strong {
+  color: var(--navy);
+}
+.nl-body a {
+  color: var(--blue);
+}
+
+/* Calendar */
+.nl-calendar {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.nl-cal-row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 14px;
+  padding: 10px 16px;
+  align-items: baseline;
+}
+.nl-cal-row + .nl-cal-row {
+  border-top: 1px solid var(--rule);
+}
+.nl-cal-date {
+  font-family: var(--nl-label);
+  font-weight: 700;
+  color: var(--red);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.nl-cal-what {
+  font-size: 14px;
+  line-height: 1.35;
+}
+.nl-cal-what b {
+  color: var(--navy);
+}
+
+/* two-up columns */
+.nl-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+}
+@media (max-width: 640px) {
+  .nl-cols {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+/* Financial tables */
+.nl-ledger {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--nl-body);
+  font-size: 13px;
+  margin: 2px 0 14px;
+}
+.nl-ledger caption {
+  text-align: left;
+  font-family: var(--nl-label);
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 0 0 6px;
+}
+.nl-ledger td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--rule);
+}
+.nl-ledger td.amt {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.nl-ledger tr.group td {
+  color: var(--ink-soft);
+  font-family: var(--nl-label);
+  font-weight: 700;
+  padding-top: 9px;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+}
+.nl-ledger tr.total td {
+  border-top: 1.5px solid var(--navy);
+  border-bottom: none;
+  font-weight: 700;
+  color: var(--navy);
+  padding-top: 6px;
+}
+.nl-ledger tr.headline td {
+  font-weight: 700;
+  color: var(--navy);
+}
+.nl-ledger .note {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+.nl-list {
+  margin: 0 0 12px;
+  padding-left: 18px;
+}
+.nl-list li {
+  font-size: 14.5px;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+.nl-list li::marker {
+  color: var(--gold-dark);
+}
+
+.nl-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--gold);
+  border-radius: 10px;
+  padding: 14px 16px 8px;
+  margin: 0 0 14px;
+}
+.nl-card h3 {
+  margin: 0 0 8px;
+  font-family: var(--nl-label);
+  font-size: 13px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.nl-officers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 22px;
+  font-size: 13.5px;
+}
+@media (max-width: 520px) {
+  .nl-officers {
+    grid-template-columns: 1fr;
+  }
+}
+.nl-officers div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px dotted var(--rule);
+}
+.nl-officers .role {
+  color: var(--ink-soft);
+}
+.nl-officers .who {
+  color: var(--navy);
+  font-weight: 700;
+  text-align: right;
+}
+
+.nl-reflection {
+  background: var(--paper-soft);
+  border-left: 4px solid var(--gold);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 8px 0 16px;
+}
+.nl-reflection p {
+  font-family: var(--nl-head);
+  font-size: 15.5px;
+  font-style: italic;
+  line-height: 1.55;
+  color: #2a3448;
+}
+.nl-reflection .attr {
+  font-family: var(--nl-label);
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.nl-badge {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  background: linear-gradient(160deg, var(--navy), var(--navy-deep));
+  color: #f3eddd;
+  padding: 14px 18px;
+  margin: 0 0 14px;
+  border-radius: 10px;
+}
+.nl-badge .medal {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: grid;
+  place-items: center;
+  color: var(--navy-deep);
+  font-weight: 800;
+  font-size: 18px;
+}
+.nl-badge b {
+  color: var(--gold);
+}
+.nl-badge p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #e9edf7;
+}
+
+.nl-congrats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+.nl-congrats .box {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.nl-congrats .box h4 {
+  margin: 0 0 8px;
+  font-family: var(--nl-label);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.nl-congrats .box ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13.5px;
+}
+.nl-congrats .box li {
+  display: flex;
+  gap: 10px;
+  padding: 3px 0;
+}
+.nl-congrats .box li .d {
+  color: var(--gold-dark);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 26px;
+  font-family: var(--nl-label);
+}
+
+.nl-prayer {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 0 0 14px;
+}
+.nl-prayer p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.nl-prayer .contact {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Photos */
+.nl-photos {
+  background: linear-gradient(160deg, var(--navy), var(--navy-deep));
+  padding: 24px clamp(20px, 4.5vw, 48px) 34px;
+  color: #eee;
+}
+.nl-photos .nl-h2 {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+.nl-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.nl-frame {
+  aspect-ratio: 4 / 3;
+  border: 1px solid rgba(247, 183, 24, 0.4);
+  border-radius: 8px;
+  background: repeating-linear-gradient(
+    45deg,
+    #1a2f63,
+    #1a2f63 12px,
+    #14275a 12px,
+    #14275a 24px
+  );
+  display: grid;
+  place-items: center;
+  color: #9fb0d4;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-family: var(--nl-label);
+  overflow: hidden;
+}
+.nl-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nl-colophon {
+  padding: 16px clamp(20px, 4.5vw, 48px);
+  background: var(--navy-deep);
+  color: #aab8dc;
+  font-family: var(--nl-label);
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.nl-colophon b {
+  color: var(--gold);
+}
+
+/* Print: drop the surrounding chrome so "Save as PDF" yields a clean sheet. */
+@media print {
+  .nl-sheet {
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+  }
+}

@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local newsletter data (dev JSON store; production uses Postgres)
+/data/store.json
+
+# Claude Code local settings (per-user, not shared)
+.claude/settings.local.json
