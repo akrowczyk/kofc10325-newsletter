@@ -16,7 +16,10 @@ async function readStore(): Promise<StoreData> {
   try {
     return JSON.parse(await fs.readFile(STORE_PATH, "utf8")) as StoreData;
   } catch {
-    await writeStore(seedData);
+    // No file yet: try to seed it, but don't crash if the filesystem is
+    // read-only (e.g. deployed to Vercel before Postgres is attached). In that
+    // case the app runs read-only on the in-memory seed until POSTGRES_URL is set.
+    await writeStore(seedData).catch(() => {});
     return structuredClone(seedData);
   }
 }
