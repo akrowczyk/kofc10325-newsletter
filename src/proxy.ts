@@ -17,6 +17,11 @@ export async function proxy(req: NextRequest) {
   return NextResponse.redirect(url);
 }
 
+// Note: /api/photos/upload is intentionally NOT gated here. Vercel Blob's
+// client-upload flow POSTs to it (both from the author's browser and as a
+// server-to-server completion callback with no cookie); a middleware redirect
+// to /login breaks the SDK. Auth for uploads is enforced inside the route's
+// onBeforeGenerateToken instead.
 export const config = {
-  matcher: ["/", "/issues/:path*", "/settings", "/api/photos/:path*"],
+  matcher: ["/", "/issues/:path*", "/settings"],
 };
