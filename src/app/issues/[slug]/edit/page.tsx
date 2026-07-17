@@ -10,5 +10,6 @@ export default async function EditIssue({
   const { slug } = await params;
   const [issue, globals] = await Promise.all([getIssue(slug), getGlobals()]);
   if (!issue) notFound();
-  return <EditorClient initialIssue={issue} globals={globals} />;
+  const blobEnabled = !!process.env.BLOB_READ_WRITE_TOKEN;
+  return <EditorClient initialIssue={issue} globals={globals} blobEnabled={blobEnabled} />;
 }

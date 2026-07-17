@@ -84,9 +84,11 @@ function Ledger({ caption, section }: { caption: string; section: FinancialSecti
 export function NewsletterTemplate({
   issue,
   globals,
+  emblemSrc = "/logo_web.png",
 }: {
   issue: Issue;
   globals: Globals;
+  emblemSrc?: string;
 }) {
   const birthdays = birthdaysInMonth(globals.members, issue.month);
   const anniversaries = anniversariesInMonth(globals.members, issue.month);
@@ -106,7 +108,7 @@ export function NewsletterTemplate({
           <div className="nl-crest-row">
             <div className="nl-crest">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo_web.png" alt={`${globals.councilName} emblem`} />
+              <img src={emblemSrc} alt={`${globals.councilName} emblem`} />
             </div>
             <div>
               <p className="nl-kicker">Knights of Columbus</p>

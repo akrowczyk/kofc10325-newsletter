@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { authEnabled } from "@/lib/auth";
+import { logoutAction } from "@/app/login/actions";
 
 // Mirrors the top navigation bar on kofc10325.org: the Knights of Columbus
 // wordmark on navy with a gold rule beneath, so the studio reads as part of the
@@ -58,6 +60,28 @@ export function SiteHeader() {
         >
           Newsletter Studio
         </span>
+        {authEnabled() ? (
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              style={{
+                fontFamily: "var(--font-label)",
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: 1,
+                textTransform: "uppercase",
+                color: "#cdd6ea",
+                background: "transparent",
+                border: "1px solid rgba(255,255,255,0.25)",
+                borderRadius: 8,
+                padding: "6px 10px",
+                cursor: "pointer",
+              }}
+            >
+              Sign out
+            </button>
+          </form>
+        ) : null}
       </div>
     </header>
   );

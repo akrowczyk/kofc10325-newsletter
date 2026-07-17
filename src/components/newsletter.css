@@ -250,6 +250,7 @@
 .nl-list {
   margin: 0 0 12px;
   padding-left: 18px;
+  list-style: disc outside; /* explicit: survives Tailwind preflight in the app */
 }
 .nl-list li {
   font-size: 14.5px;

@@ -1,15 +1,33 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+
+const btnBase: React.CSSProperties = {
+  fontSize: 13,
+  fontWeight: 600,
+  padding: "7px 12px",
+  borderRadius: 8,
+  border: "1px solid var(--studio-border)",
+  background: "#fff",
+  color: "var(--studio-ink)",
+  cursor: "pointer",
+  textDecoration: "none",
+  whiteSpace: "nowrap",
+};
 
 // A slim toolbar above the published newsletter. Hidden when printing, so
 // "Save as PDF" produces a clean sheet with no app chrome.
 export function PublicToolbar({
   slug,
   status,
+  exportHref,
+  emailHtml,
 }: {
   slug: string;
   status: "draft" | "published";
+  exportHref: string;
+  emailHtml: string;
 }) {
   return (
     <>
@@ -30,13 +48,10 @@ export function PublicToolbar({
           flexWrap: "wrap",
         }}
       >
-        <Link
-          href="/"
-          style={{ fontSize: 13, fontWeight: 600, color: "var(--studio-navy)" }}
-        >
+        <Link href="/" style={{ fontSize: 13, fontWeight: 600, color: "var(--studio-navy)" }}>
           ← Studio
         </Link>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
           {status === "draft" ? (
             <span
               style={{
@@ -53,43 +68,48 @@ export function PublicToolbar({
               Draft preview
             </span>
           ) : null}
-          <Link
-            href={`/issues/${slug}/edit`}
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: "var(--studio-ink)",
-              border: "1px solid var(--studio-border)",
-              padding: "7px 12px",
-              borderRadius: 8,
-            }}
-          >
+          <Link href={`/issues/${slug}/edit`} style={btnBase}>
             Edit
           </Link>
-          <PrintButton />
+          <CopyButton label="Copy email HTML" text={emailHtml} />
+          <a href={exportHref} style={btnBase}>
+            Download .html
+          </a>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            style={{ ...btnBase, background: "var(--studio-navy)", color: "#fff", border: "none", fontWeight: 700 }}
+          >
+            Save as PDF
+          </button>
         </div>
       </div>
     </>
   );
 }
 
-function PrintButton() {
+function CopyButton({ label, text }: { label: string; text: string }) {
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard blocked — fall back to a temporary textarea selection.
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }
   return (
-    <button
-      type="button"
-      onClick={() => window.print()}
-      style={{
-        fontSize: 13,
-        fontWeight: 700,
-        color: "#fff",
-        background: "var(--studio-navy)",
-        padding: "8px 14px",
-        borderRadius: 8,
-        border: "none",
-        cursor: "pointer",
-      }}
-    >
-      Save as PDF
+    <button type="button" onClick={copy} style={btnBase}>
+      {copied ? "✓ Copied" : label}
     </button>
   );
 }

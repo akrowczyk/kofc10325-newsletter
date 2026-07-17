@@ -3,6 +3,9 @@ import { listIssues, getGlobals, issueTitle } from "@/lib/store";
 import { SiteHeader } from "@/components/SiteHeader";
 import { startNextIssueAction } from "./actions";
 
+// Read the store (and env-selected backend) at request time, not build time.
+export const dynamic = "force-dynamic";
+
 export default async function Dashboard() {
   const [issues, globals] = await Promise.all([listIssues(), getGlobals()]);
 

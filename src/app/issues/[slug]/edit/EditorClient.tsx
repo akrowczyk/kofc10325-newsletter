@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import { upload } from "@vercel/blob/client";
 import type {
   CalendarEvent,
   FinancialSection,
@@ -31,9 +32,11 @@ function cleanIssue(issue: Issue): Issue {
 export function EditorClient({
   initialIssue,
   globals,
+  blobEnabled,
 }: {
   initialIssue: Issue;
   globals: Globals;
+  blobEnabled: boolean;
 }) {
   const [issue, setIssue] = useState<Issue>(initialIssue);
   const [savedAt, setSavedAt] = useState<string | null>(null);
@@ -199,6 +202,7 @@ export function EditorClient({
               <PhotosEditor
                 title={issue.photoSectionTitle}
                 photos={issue.photos}
+                blobEnabled={blobEnabled}
                 onTitle={(photoSectionTitle) => patch({ photoSectionTitle })}
                 onChange={(photos) => patch({ photos })}
               />
@@ -477,33 +481,96 @@ function AmountInput({ value, onChange }: { value: number; onChange: (n: number)
 function PhotosEditor({
   title,
   photos,
+  blobEnabled,
   onTitle,
   onChange,
 }: {
   title: string;
   photos: PhotoItem[];
+  blobEnabled: boolean;
   onTitle: (t: string) => void;
   onChange: (p: PhotoItem[]) => void;
 }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleFiles(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setError(null);
+    setUploading(true);
+    try {
+      const added: PhotoItem[] = [];
+      for (const file of Array.from(files)) {
+        const result = await upload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/photos/upload",
+        });
+        added.push({ id: uid(), caption: "", url: result.url });
+      }
+      onChange([...photos, ...added]);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  }
+
   return (
     <div className="space-y-2">
       <Text label="Section title" value={title} onChange={onTitle} />
+
       {photos.map((p) => (
-        <div key={p.id} className="flex gap-2">
+        <div key={p.id} className="flex items-center gap-2">
+          {p.url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={p.url}
+              alt=""
+              className="h-11 w-14 flex-none rounded border border-[var(--studio-border)] object-cover"
+            />
+          ) : (
+            <span className="flex h-11 w-14 flex-none items-center justify-center rounded border border-dashed border-[var(--studio-border)] text-[10px] text-[var(--studio-muted)]">
+              empty
+            </span>
+          )}
           <input
             className={inputCls}
-            placeholder="Image URL (optional for now)"
+            placeholder="Image URL"
             value={p.url ?? ""}
             onChange={(e) => onChange(photos.map((x) => (x.id === p.id ? { ...x, url: e.target.value } : x)))}
           />
           <RemoveBtn onClick={() => onChange(photos.filter((x) => x.id !== p.id))} />
         </div>
       ))}
-      <AddButton label="Add photo slot" onClick={() => onChange([...photos, { id: uid(), caption: "" }])} />
-      <p className="text-xs text-[var(--studio-muted)]">
-        Photo uploads land in v2 (Vercel Blob). For now, empty slots show as placeholder
-        frames, or paste an image URL.
-      </p>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {blobEnabled ? (
+          <label
+            className={
+              "cursor-pointer rounded-lg border border-dashed border-[var(--studio-border)] px-3 py-1.5 text-xs font-semibold text-[var(--studio-navy)] hover:bg-gray-50 " +
+              (uploading ? "pointer-events-none opacity-60" : "")
+            }
+          >
+            {uploading ? "Uploading…" : "⬆ Upload photos"}
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => handleFiles(e.target.files)}
+            />
+          </label>
+        ) : null}
+        <AddButton label="Add photo by URL" onClick={() => onChange([...photos, { id: uid(), caption: "" }])} />
+      </div>
+
+      {error ? <p className="text-xs text-red-600">{error}</p> : null}
+      {!blobEnabled ? (
+        <p className="text-xs text-[var(--studio-muted)]">
+          Direct upload turns on once Vercel Blob is connected. For now, paste an image URL
+          (empty slots show as placeholder frames).
+        </p>
+      ) : null}
     </div>
   );
 }
