@@ -102,6 +102,10 @@ export interface Issue {
   charityReport: string;
   proLifeReport: string;
 
+  // When true, render a "Council Officers" section (roster from settings).
+  // Off by default — it's not relevant every month.
+  includeOfficers?: boolean;
+
   oldBusiness: string;
   newBusiness: string;
   knightOfMonth: string;

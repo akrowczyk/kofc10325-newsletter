@@ -222,14 +222,6 @@ export function NewsletterTemplate({
                 {issue.ddReport ? (
                   <Section title="District Deputy Report">
                     <Paragraphs text={issue.ddReport} />
-                    <div className="nl-officers">
-                      {globals.officers.map((o) => (
-                        <div key={o.id}>
-                          <span className="role">{o.role}</span>
-                          <span className="who">{o.name}</span>
-                        </div>
-                      ))}
-                    </div>
                   </Section>
                 ) : null}
               </div>
@@ -239,9 +231,7 @@ export function NewsletterTemplate({
           {/* Pro-Life */}
           {issue.proLifeReport ? (
             <Section title="Pro-Life Report">
-              <div className="nl-narrow">
-                <Paragraphs text={issue.proLifeReport} />
-              </div>
+              <Paragraphs text={issue.proLifeReport} />
             </Section>
           ) : null}
 
@@ -366,6 +356,20 @@ export function NewsletterTemplate({
               )}
             </div>
           </Section>
+
+          {/* Council Officers — optional; author opts in per issue. */}
+          {issue.includeOfficers && globals.officers.length > 0 ? (
+            <Section title="Council Officers">
+              <div className="nl-officers">
+                {globals.officers.map((o) => (
+                  <div key={o.id}>
+                    <span className="role">{o.role}</span>
+                    <span className="who">{o.name}</span>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          ) : null}
         </div>
 
         {/* Photos — only real pictures; empty slots never appear in the output. */}

@@ -155,6 +155,7 @@ export const seedData: StoreData = {
         "Chaplain Fr. Sam Conforti told us the glass wall between the Narthex and the worship space will be installed June 23–24.\n\nFr. Sam welcomes flowers in the church, and encouraged KC to work with the CCW to provide flowers twice each year.\n\nTwo new statues will soon be installed in church — one of Mary, the other of St. Joseph.",
       ddReport:
         "DD Albert Treado, Associate Diocesan Chairman for Charities, advised us to operate toward the Star Council Award, and to file the Columbian Award and Program forms. He reminded us that meetings are no longer limited to KC members — invite people to attend.\n\nDD Treado presided over the installation of the officers for 2026–2027.",
+      includeOfficers: true, // July issue listed the newly installed officers
       publicityReport:
         "The June Parish Newsletter contained an article on KC Benefits. A bulletin insert was submitted thanking everyone for donations to the Baby Bottle Collection.",
       charityReport:

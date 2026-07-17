@@ -175,6 +175,21 @@ export function EditorClient({
             <SectionCard title="Reports">
               <TextArea label="Church report" value={issue.churchReport} onChange={(churchReport) => patch({ churchReport })} />
               <TextArea label="District Deputy report" value={issue.ddReport} onChange={(ddReport) => patch({ ddReport })} />
+              <label className="flex items-start gap-2 rounded-lg bg-[var(--studio-bg)] px-3 py-2 text-sm">
+                <input
+                  type="checkbox"
+                  className="mt-0.5"
+                  checked={!!issue.includeOfficers}
+                  onChange={(e) => patch({ includeOfficers: e.target.checked })}
+                />
+                <span>
+                  Include the <b>Council Officers</b> roster as its own section
+                  <span className="block text-xs text-[var(--studio-muted)]">
+                    Pulls the current roster from Council settings. Leave off unless this issue
+                    should list officers (e.g. after installation).
+                  </span>
+                </span>
+              </label>
               <TextArea label="Publicity report" value={issue.publicityReport} onChange={(publicityReport) => patch({ publicityReport })} />
               <TextArea label="Charity Ambassador report" value={issue.charityReport} onChange={(charityReport) => patch({ charityReport })} />
               <TextArea label="Pro-Life report" value={issue.proLifeReport} onChange={(proLifeReport) => patch({ proLifeReport })} rows={5} />
