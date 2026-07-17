@@ -396,6 +396,7 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   min-width: 26px;
+  white-space: nowrap;
   font-family: var(--nl-label);
 }
 

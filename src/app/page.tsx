@@ -26,14 +26,22 @@ export default async function Dashboard() {
         </p>
       </header>
 
-      <form action={startNextIssueAction} className="mb-8">
-        <button
-          type="submit"
-          className="rounded-lg bg-[var(--studio-navy)] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+      <div className="mb-8 flex flex-wrap items-center gap-3">
+        <form action={startNextIssueAction}>
+          <button
+            type="submit"
+            className="rounded-lg bg-[var(--studio-navy)] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+          >
+            ✦ Start next month from last issue
+          </button>
+        </form>
+        <Link
+          href="/settings"
+          className="rounded-lg border border-[var(--studio-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--studio-navy)] hover:bg-gray-50"
         >
-          ✦ Start next month from last issue
-        </button>
-      </form>
+          ⚙ Council settings
+        </Link>
+      </div>
 
       <div className="space-y-3">
         {issues.map((issue) => (

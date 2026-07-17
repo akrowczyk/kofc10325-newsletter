@@ -92,6 +92,7 @@ export function NewsletterTemplate({
 }) {
   const birthdays = birthdaysInMonth(globals.members, issue.month);
   const anniversaries = anniversariesInMonth(globals.members, issue.month);
+  const congratulations = issue.congratulations ?? []; // default for older records
   const monthName = MONTH_NAMES[issue.month - 1];
   const prevMonthName = MONTH_NAMES[(issue.month + 10) % 12]; // month reported on
   const hasReports =
@@ -315,10 +316,10 @@ export function NewsletterTemplate({
             </div>
           ) : null}
 
-          {/* Congratulations */}
+          {/* Congratulations — auto birthdays/anniversaries + custom boxes */}
           <Section
             title="Congratulations"
-            show={birthdays.length > 0 || anniversaries.length > 0}
+            show={birthdays.length > 0 || anniversaries.length > 0 || congratulations.length > 0}
           >
             <div className="nl-congrats">
               {birthdays.length > 0 ? (
@@ -347,6 +348,21 @@ export function NewsletterTemplate({
                   </ul>
                 </div>
               ) : null}
+              {congratulations.map((box) =>
+                box.entries.length > 0 ? (
+                  <div className="box" key={box.id}>
+                    <h4>{box.title}</h4>
+                    <ul>
+                      {box.entries.map((e) => (
+                        <li key={e.id}>
+                          {e.when ? <span className="d">{e.when}</span> : null}
+                          {e.text}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null,
+              )}
             </div>
           </Section>
         </div>

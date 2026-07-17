@@ -58,6 +58,20 @@ export interface Reflection {
   attribution?: string;
 }
 
+/** One line in a custom Congratulations box (e.g. a birth, wedding, ordination). */
+export interface CongratsEntry {
+  id: string;
+  when?: string; // optional short label shown in gold, e.g. "Feb 16"
+  text: string; // e.g. "Mariana Fasano, daughter of Rosita & Rocco Fasano"
+}
+
+/** A titled box in the Congratulations section, added per issue. */
+export interface CongratsBox {
+  id: string;
+  title: string; // e.g. "New Arrival", "Wedding", "Congratulations"
+  entries: CongratsEntry[];
+}
+
 /** Month-specific newsletter content. */
 export interface Issue {
   id: string;
@@ -94,6 +108,10 @@ export interface Issue {
 
   lecturerReflection: Reflection;
   popeIntention: string;
+
+  // Custom Congratulations boxes (births, weddings, etc.) shown alongside the
+  // auto-generated birthdays/anniversaries.
+  congratulations: CongratsBox[];
 
   photoSectionTitle: string;
   photos: PhotoItem[];

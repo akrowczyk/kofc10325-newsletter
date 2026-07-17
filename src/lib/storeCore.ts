@@ -72,6 +72,7 @@ export function blankIssue(slug: string, year: number, month: number): Issue {
     knightOfMonth: "",
     lecturerReflection: { body: "", attribution: "" },
     popeIntention: "",
+    congratulations: [],
     photoSectionTitle: "Photos",
     photos: [],
   };

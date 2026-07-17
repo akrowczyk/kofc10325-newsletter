@@ -5,6 +5,7 @@ import Link from "next/link";
 import { upload } from "@vercel/blob/client";
 import type {
   CalendarEvent,
+  CongratsBox,
   FinancialSection,
   Globals,
   Issue,
@@ -26,6 +27,12 @@ function cleanIssue(issue: Issue): Issue {
     motions: issue.motions.filter((m) => m.trim() !== ""),
     gkSummary: issue.gkSummary.filter((m) => m.trim() !== ""),
     gkReport: issue.gkReport.map((p) => p.trim()).filter(Boolean),
+    congratulations: (issue.congratulations ?? [])
+      .map((box) => ({
+        ...box,
+        entries: box.entries.filter((e) => e.text.trim() !== ""),
+      }))
+      .filter((box) => box.title.trim() !== "" || box.entries.length > 0),
   };
 }
 
@@ -195,6 +202,17 @@ export function EditorClient({
                 label="Holy Father's intention"
                 value={issue.popeIntention}
                 onChange={(popeIntention) => patch({ popeIntention })}
+              />
+            </SectionCard>
+
+            <SectionCard title="Congratulations">
+              <p className="text-xs text-[var(--studio-muted)]">
+                Birthdays and anniversaries are filled in automatically from your saved
+                members. Add boxes here for one-off items — births, weddings, ordinations.
+              </p>
+              <CongratulationsEditor
+                boxes={issue.congratulations ?? []}
+                onChange={(congratulations) => patch({ congratulations })}
               />
             </SectionCard>
 
@@ -473,6 +491,87 @@ function AmountInput({ value, onChange }: { value: number; onChange: (n: number)
       value={Number.isFinite(value) ? value : 0}
       onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
     />
+  );
+}
+
+/* -------------------------- congratulations editor -------------------------- */
+
+function CongratulationsEditor({
+  boxes,
+  onChange,
+}: {
+  boxes: CongratsBox[];
+  onChange: (b: CongratsBox[]) => void;
+}) {
+  const setBox = (id: string, next: CongratsBox) =>
+    onChange(boxes.map((b) => (b.id === id ? next : b)));
+
+  return (
+    <div className="space-y-2">
+      {boxes.map((box) => (
+        <div key={box.id} className="rounded-lg border border-[var(--studio-border)] p-2">
+          <div className="flex items-center gap-2">
+            <input
+              className={inputCls + " font-semibold"}
+              placeholder="Box title (e.g. New Arrival)"
+              value={box.title}
+              onChange={(e) => setBox(box.id, { ...box, title: e.target.value })}
+            />
+            <RemoveBtn onClick={() => onChange(boxes.filter((b) => b.id !== box.id))} />
+          </div>
+          <div className="mt-2 space-y-1.5">
+            {box.entries.map((en) => (
+              <div key={en.id} className="flex gap-2">
+                <input
+                  className={inputCls + " max-w-[6.5rem]"}
+                  placeholder="Date (opt.)"
+                  value={en.when ?? ""}
+                  onChange={(e) =>
+                    setBox(box.id, {
+                      ...box,
+                      entries: box.entries.map((x) =>
+                        x.id === en.id ? { ...x, when: e.target.value } : x,
+                      ),
+                    })
+                  }
+                />
+                <input
+                  className={inputCls}
+                  placeholder="Details"
+                  value={en.text}
+                  onChange={(e) =>
+                    setBox(box.id, {
+                      ...box,
+                      entries: box.entries.map((x) =>
+                        x.id === en.id ? { ...x, text: e.target.value } : x,
+                      ),
+                    })
+                  }
+                />
+                <RemoveBtn
+                  onClick={() =>
+                    setBox(box.id, { ...box, entries: box.entries.filter((x) => x.id !== en.id) })
+                  }
+                />
+              </div>
+            ))}
+            <AddButton
+              label="Add entry"
+              onClick={() =>
+                setBox(box.id, {
+                  ...box,
+                  entries: [...box.entries, { id: uid(), when: "", text: "" }],
+                })
+              }
+            />
+          </div>
+        </div>
+      ))}
+      <AddButton
+        label="Add box (Births, Wedding…)"
+        onClick={() => onChange([...boxes, { id: uid(), title: "", entries: [] }])}
+      />
+    </div>
   );
 }
 

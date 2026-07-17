@@ -174,6 +174,19 @@ export const seedData: StoreData = {
       },
       popeIntention:
         "Let us pray for the respect and protection of human life in all its stages, recognizing it as a gift from God.",
+      congratulations: [
+        {
+          id: "cg1",
+          title: "New Arrival",
+          entries: [
+            {
+              id: "cge1",
+              when: "Feb 16",
+              text: "Mariana Fasano, daughter of Rosita & Rocco Fasano",
+            },
+          ],
+        },
+      ],
       photoSectionTitle: "Corpus Christi Procession · June 7",
       photos: [
         { id: "p1", caption: "" },
