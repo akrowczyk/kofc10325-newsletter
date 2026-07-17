@@ -4,10 +4,15 @@ import { buildNextDraft, issueTitle, type StoreBackend } from "./storeCore";
 import { jsonBackend } from "./backends/json";
 import { postgresBackend } from "./backends/postgres";
 
-// Pick the backend by environment: Vercel Postgres in production (POSTGRES_URL
-// is auto-injected when a Postgres store is attached to the project), the local
-// JSON file otherwise. Nothing else in the app knows which one is active.
-const usePostgres = !!process.env.POSTGRES_URL;
+// Pick the backend by environment: Vercel Postgres in production (a connection
+// string is auto-injected when a Postgres store is attached — the integration
+// names it POSTGRES_URL or DATABASE_URL), the local JSON file otherwise.
+const usePostgres = !!(
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_PRISMA_URL ||
+  process.env.POSTGRES_URL_NON_POOLING
+);
 const backend: StoreBackend = usePostgres ? postgresBackend : jsonBackend;
 
 export const storeMode = usePostgres ? "postgres" : "json";

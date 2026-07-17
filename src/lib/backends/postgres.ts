@@ -4,6 +4,17 @@ import { seedData } from "../seed";
 import type { Globals, Issue } from "../types";
 import type { StoreBackend } from "../storeCore";
 
+// The Vercel/Neon integration may expose the connection string as POSTGRES_URL
+// or DATABASE_URL (or the non-pooling variants). @vercel/postgres reads
+// POSTGRES_URL (lazily, on first query), so alias whatever we have into it here.
+if (!process.env.POSTGRES_URL) {
+  const alt =
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_PRISMA_URL ||
+    process.env.POSTGRES_URL_NON_POOLING;
+  if (alt) process.env.POSTGRES_URL = alt;
+}
+
 // Production backend: Vercel Postgres (Neon). Activated whenever POSTGRES_URL is
 // set. Stores each issue's full object as JSONB alongside a few columns used for
 // ordering/filtering, and the globals as a single JSONB row.
