@@ -1,10 +1,19 @@
 import { notFound } from "next/navigation";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import type { Metadata } from "next";
 import { getGlobals, getIssue, issueTitle } from "@/lib/store";
 import { buildEmailHtml } from "@/lib/emailHtml";
+import { authEnabled, verifySession, COOKIE_NAME } from "@/lib/auth";
 import { NewsletterTemplate } from "@/components/NewsletterTemplate";
 import { PublicToolbar } from "./PublicToolbar";
+
+// Is the current viewer the signed-in author? When auth is off there's no
+// author/reader distinction, so treat everyone as a plain reader (clean links).
+async function viewerIsAuthor(): Promise<boolean> {
+  if (!authEnabled()) return false;
+  const jar = await cookies();
+  return verifySession(jar.get(COOKIE_NAME)?.value);
+}
 
 async function baseUrl(): Promise<string> {
   if (process.env.NEXT_PUBLIC_SITE_URL) {
@@ -36,8 +45,16 @@ export default async function PublicIssue({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [issue, globals] = await Promise.all([getIssue(slug), getGlobals()]);
+  const [issue, globals, isAuthor] = await Promise.all([
+    getIssue(slug),
+    getGlobals(),
+    viewerIsAuthor(),
+  ]);
   if (!issue) notFound();
+
+  // Hide unpublished drafts from readers (only when auth is on, so the author
+  // can still preview drafts when auth is off).
+  if (issue.status === "draft" && authEnabled() && !isAuthor) notFound();
 
   const base = await baseUrl();
   const emailHtml = buildEmailHtml(issue, globals, `${base}/n/${issue.slug}`);
@@ -49,6 +66,7 @@ export default async function PublicIssue({
         status={issue.status}
         exportHref={`/api/issues/${issue.slug}/export`}
         emailHtml={emailHtml}
+        isAuthor={isAuthor}
       />
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 16px 48px" }}>
         <NewsletterTemplate issue={issue} globals={globals} />

@@ -18,16 +18,21 @@ const btnBase: React.CSSProperties = {
 
 // A slim toolbar above the published newsletter. Hidden when printing, so
 // "Save as PDF" produces a clean sheet with no app chrome.
+//
+// Readers see only "Save as PDF". The author (signed in) also sees Edit, the
+// email/HTML export tools, a back-to-Studio link, and a draft badge.
 export function PublicToolbar({
   slug,
   status,
   exportHref,
   emailHtml,
+  isAuthor,
 }: {
   slug: string;
   status: "draft" | "published";
   exportHref: string;
   emailHtml: string;
+  isAuthor: boolean;
 }) {
   return (
     <>
@@ -40,7 +45,7 @@ export function PublicToolbar({
           zIndex: 10,
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: isAuthor ? "space-between" : "flex-end",
           gap: 12,
           padding: "10px 16px",
           background: "#fff",
@@ -48,11 +53,13 @@ export function PublicToolbar({
           flexWrap: "wrap",
         }}
       >
-        <Link href="/" style={{ fontSize: 13, fontWeight: 600, color: "var(--studio-navy)" }}>
-          ← Studio
-        </Link>
+        {isAuthor ? (
+          <Link href="/" style={{ fontSize: 13, fontWeight: 600, color: "var(--studio-navy)" }}>
+            ← Studio
+          </Link>
+        ) : null}
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          {status === "draft" ? (
+          {isAuthor && status === "draft" ? (
             <span
               style={{
                 fontSize: 11,
@@ -68,13 +75,17 @@ export function PublicToolbar({
               Draft preview
             </span>
           ) : null}
-          <Link href={`/issues/${slug}/edit`} style={btnBase}>
-            Edit
-          </Link>
-          <CopyButton label="Copy email HTML" text={emailHtml} />
-          <a href={exportHref} style={btnBase}>
-            Download .html
-          </a>
+          {isAuthor ? (
+            <>
+              <Link href={`/issues/${slug}/edit`} style={btnBase}>
+                Edit
+              </Link>
+              <CopyButton label="Copy email HTML" text={emailHtml} />
+              <a href={exportHref} style={btnBase}>
+                Download .html
+              </a>
+            </>
+          ) : null}
           <button
             type="button"
             onClick={() => window.print()}

@@ -93,6 +93,7 @@ export function NewsletterTemplate({
   const birthdays = birthdaysInMonth(globals.members, issue.month);
   const anniversaries = anniversariesInMonth(globals.members, issue.month);
   const congratulations = issue.congratulations ?? []; // default for older records
+  const photos = issue.photos.filter((p) => p.url && p.url.trim() !== "");
   const monthName = MONTH_NAMES[issue.month - 1];
   const prevMonthName = MONTH_NAMES[(issue.month + 10) % 12]; // month reported on
   const hasReports =
@@ -367,18 +368,14 @@ export function NewsletterTemplate({
           </Section>
         </div>
 
-        {/* Photos */}
-        {issue.photos.length > 0 ? (
+        {/* Photos — only real pictures; empty slots never appear in the output. */}
+        {photos.length > 0 ? (
           <section className="nl-photos">
             <h2 className="nl-h2">{issue.photoSectionTitle || "Photos"}</h2>
             <div className="nl-photo-grid">
-              {issue.photos.map((ph) => (
+              {photos.map((ph) => (
                 <div className="nl-frame" key={ph.id}>
-                  {ph.url ? (
-                    <img src={ph.url} alt={ph.caption || "Council photo"} />
-                  ) : (
-                    "PHOTO"
-                  )}
+                  <img src={ph.url} alt={ph.caption || "Council photo"} />
                 </div>
               ))}
             </div>
