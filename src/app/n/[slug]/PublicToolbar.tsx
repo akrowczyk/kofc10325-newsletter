@@ -27,13 +27,16 @@ export function PublicToolbar({
   exportHref,
   emailHtml,
   isAuthor,
+  websiteUrl,
 }: {
   slug: string;
   status: "draft" | "published";
   exportHref: string;
   emailHtml: string;
   isAuthor: boolean;
+  websiteUrl: string;
 }) {
+  const siteDomain = websiteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
   return (
     <>
       <style>{`@media print { .nl-toolbar { display: none !important; } body { background: #fff !important; } }`}</style>
@@ -45,7 +48,7 @@ export function PublicToolbar({
           zIndex: 10,
           display: "flex",
           alignItems: "center",
-          justifyContent: isAuthor ? "space-between" : "flex-end",
+          justifyContent: "space-between",
           gap: 12,
           padding: "10px 16px",
           background: "#fff",
@@ -57,7 +60,14 @@ export function PublicToolbar({
           <Link href="/" style={{ fontSize: 13, fontWeight: 600, color: "var(--studio-navy)" }}>
             ← Studio
           </Link>
-        ) : null}
+        ) : (
+          <a
+            href={websiteUrl}
+            style={{ fontSize: 13, fontWeight: 600, color: "var(--studio-navy)" }}
+          >
+            ← Back to {siteDomain}
+          </a>
+        )}
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
           {isAuthor && status === "draft" ? (
             <span

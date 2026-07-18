@@ -67,6 +67,7 @@ export default async function PublicIssue({
         exportHref={`/api/issues/${issue.slug}/export`}
         emailHtml={emailHtml}
         isAuthor={isAuthor}
+        websiteUrl={globals.websiteUrl}
       />
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 16px 48px" }}>
         <NewsletterTemplate issue={issue} globals={globals} />
