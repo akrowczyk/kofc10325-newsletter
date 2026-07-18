@@ -1,5 +1,37 @@
 import { MONTH_NAMES } from "./types";
-import type { Globals, Issue } from "./types";
+import type { EmailSettings, Globals, Issue } from "./types";
+
+export function defaultEmailSettings(councilName: string): EmailSettings {
+  return {
+    fromName: councilName || "Council Newsletter",
+    fromEmail: "", // author sets a verified address, e.g. news@kofc10325.org
+    replyTo: "",
+    subjectTemplate: "{{councilName}} — {{month}} {{year}} Newsletter",
+    bodyTemplate:
+      "The {{month}} {{year}} newsletter is now available. Click the button below to read it.\n\nVivat Jesus!",
+  };
+}
+
+/** Fill in fields that older stored globals may not have. */
+export function withGlobalDefaults(g: Globals): Globals {
+  return {
+    ...g,
+    distributionList: g.distributionList ?? [],
+    emailSettings: g.emailSettings ?? defaultEmailSettings(g.councilName),
+  };
+}
+
+/** Substitute {{councilName}}, {{month}}, {{year}}, {{link}} in a template. */
+export function renderTemplate(
+  template: string,
+  vars: { councilName: string; month: string; year: string | number; link: string },
+): string {
+  return template
+    .replace(/\{\{\s*councilName\s*\}\}/g, vars.councilName)
+    .replace(/\{\{\s*month\s*\}\}/g, vars.month)
+    .replace(/\{\{\s*year\s*\}\}/g, String(vars.year))
+    .replace(/\{\{\s*link\s*\}\}/g, vars.link);
+}
 
 // Backend-agnostic store logic. Both the JSON and Postgres backends implement
 // StoreBackend; the higher-level operations (publish, clone-next-month) are

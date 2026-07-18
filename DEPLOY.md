@@ -67,6 +67,25 @@ and can edit. `/n/...` newsletter pages remain public with no login.
 
 ---
 
+## 6. Member email notifications (optional, via Resend)
+
+Lets you manually email members a link to a published issue.
+
+1. Create a free account at **resend.com**.
+2. **Add & verify your domain** (`kofc10325.org`): Resend shows a few DNS
+   records (SPF/DKIM) — add them in **Hostinger → your domain → DNS**. This is
+   what makes emails land in inboxes instead of spam. (Your main site's records
+   are untouched.)
+3. Create an **API key** in Resend.
+4. In Vercel **Settings → Environment Variables**, add `RESEND_API_KEY` = that
+   key. **Redeploy.**
+5. In the app: **Council settings → Email sending**, set the **From address** to
+   something on the verified domain (e.g. `news@kofc10325.org`), and add members
+   under **Email distribution list**.
+6. To send: on the dashboard, a published issue shows a **Notify** button →
+   review the subject/message → **Send**. Each member gets their own email with a
+   button to the newsletter.
+
 ## Using it
 
 - **Author:** go to `newsletter.kofc10325.org`, sign in, click

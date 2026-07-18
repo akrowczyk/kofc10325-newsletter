@@ -57,6 +57,15 @@ export const seedData: StoreData = {
       "Keep Seminarian Peter Davis and recently ordained Jonathan Hernandez in your prayers.",
       "Support our Charity Ambassador's Fund.",
     ],
+    distributionList: [],
+    emailSettings: {
+      fromName: "Holy Ghost Council 10325",
+      fromEmail: "",
+      replyTo: "",
+      subjectTemplate: "{{councilName}} — {{month}} {{year}} Newsletter",
+      bodyTemplate:
+        "The {{month}} {{year}} newsletter is now available. Click the button below to read it.\n\nVivat Jesus!",
+    },
   },
   issues: [
     {

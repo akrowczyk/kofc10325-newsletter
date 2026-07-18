@@ -74,6 +74,14 @@ export default async function Dashboard() {
               >
                 Edit
               </Link>
+              {issue.status === "published" ? (
+                <Link
+                  href={`/issues/${issue.slug}/send`}
+                  className="rounded-lg border border-[var(--studio-border)] px-3 py-2 text-sm font-medium text-[var(--studio-navy)] hover:bg-gray-50"
+                >
+                  Notify
+                </Link>
+              ) : null}
               <DeleteIssueButton slug={issue.slug} title={issueTitle(issue)} />
             </div>
           </div>

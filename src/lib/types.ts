@@ -145,6 +145,22 @@ export interface PrayerList {
   intro?: string;
 }
 
+/** A member on the email distribution list. */
+export interface Recipient {
+  id: string;
+  name?: string;
+  email: string;
+}
+
+/** Sender identity + default templates for member notification emails. */
+export interface EmailSettings {
+  fromName: string;
+  fromEmail: string;
+  replyTo?: string;
+  subjectTemplate: string;
+  bodyTemplate: string;
+}
+
 /** Data that carries over month to month. */
 export interface Globals {
   councilName: string;
@@ -154,6 +170,8 @@ export interface Globals {
   members: Member[];
   prayerList: PrayerList;
   standingSummary: string[]; // default Grand Knight's summary bullets
+  distributionList: Recipient[];
+  emailSettings: EmailSettings;
 }
 
 export interface StoreData {

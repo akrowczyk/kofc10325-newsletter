@@ -24,6 +24,10 @@ Branded to match [kofc10325.org](https://kofc10325.org). Built for Vercel.
     linking to the hosted page (paste into Gmail/Outlook).
   - **Download .html** — a single self-contained file (fonts, emblem, CSS all
     inlined) to drop into the Hostinger git-push flow under the main domain.
+- **Notify members** (`/issues/[slug]/send`) — manually email the distribution
+  list a branded announcement with a button linking to the published issue. Sent
+  per-recipient via Resend (env-gated on `RESEND_API_KEY`); list + templates live
+  in Council settings. See DEPLOY.md.
 
 ## How it runs in each environment
 

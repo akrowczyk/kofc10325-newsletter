@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import type { Globals, Member, MonthDay, Officer } from "@/lib/types";
+import type { Globals, Member, MonthDay, Officer, Recipient } from "@/lib/types";
 import { saveGlobalsAction } from "./actions";
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -108,6 +108,59 @@ export function SettingsClient({ initialGlobals }: { initialGlobals: Globals }) 
           </label>
         </Card>
 
+        <Card title="Email distribution list">
+          <p className="text-xs text-[var(--studio-muted)]">
+            Members here receive the “Notify members” email when you send a newsletter
+            announcement. Each person gets their own email (they don&apos;t see each other).
+          </p>
+          <DistributionEditor
+            list={g.distributionList}
+            onChange={(distributionList) => patch({ distributionList })}
+          />
+        </Card>
+
+        <Card title="Email sending">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field
+              label="From name"
+              value={g.emailSettings.fromName}
+              onChange={(v) => patch({ emailSettings: { ...g.emailSettings, fromName: v } })}
+            />
+            <Field
+              label="From address (verified domain)"
+              value={g.emailSettings.fromEmail}
+              onChange={(v) => patch({ emailSettings: { ...g.emailSettings, fromEmail: v } })}
+            />
+          </div>
+          <Field
+            label="Reply-to (optional)"
+            value={g.emailSettings.replyTo ?? ""}
+            onChange={(v) => patch({ emailSettings: { ...g.emailSettings, replyTo: v } })}
+          />
+          <Field
+            label="Subject template"
+            value={g.emailSettings.subjectTemplate}
+            onChange={(v) => patch({ emailSettings: { ...g.emailSettings, subjectTemplate: v } })}
+          />
+          <label className="block">
+            <span className={labelCls}>Message template</span>
+            <textarea
+              className={inputCls}
+              rows={4}
+              value={g.emailSettings.bodyTemplate}
+              onChange={(e) =>
+                patch({ emailSettings: { ...g.emailSettings, bodyTemplate: e.target.value } })
+              }
+            />
+          </label>
+          <p className="text-xs text-[var(--studio-muted)]">
+            Variables you can use in the subject/message:{" "}
+            <code>{"{{councilName}}"}</code>, <code>{"{{month}}"}</code>, <code>{"{{year}}"}</code>.
+            The “From address” must be on a domain you&apos;ve verified with Resend (e.g.
+            news@kofc10325.org).
+          </p>
+        </Card>
+
         <div className="flex justify-end">
           <button
             onClick={save}
@@ -202,6 +255,79 @@ function OfficersEditor({
         label="Add officer"
         onClick={() => onChange([...officers, { id: uid(), role: "", name: "" }])}
       />
+    </div>
+  );
+}
+
+/* ------------------------------ distribution list --------------------------- */
+
+function DistributionEditor({
+  list,
+  onChange,
+}: {
+  list: Recipient[];
+  onChange: (r: Recipient[]) => void;
+}) {
+  const set = (id: string, p: Partial<Recipient>) =>
+    onChange(list.map((r) => (r.id === id ? { ...r, ...p } : r)));
+
+  function addBulk(text: string) {
+    // Accept pasted "Name <email>" or bare emails, one per line or comma-separated.
+    const entries: Recipient[] = [];
+    for (const raw of text.split(/[\n,]+/)) {
+      const s = raw.trim();
+      if (!s) continue;
+      const m = s.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
+      if (m) entries.push({ id: uid(), name: m[1] || undefined, email: m[2].trim() });
+      else if (/@/.test(s)) entries.push({ id: uid(), email: s });
+    }
+    if (entries.length) onChange([...list, ...entries]);
+  }
+
+  return (
+    <div className="space-y-2">
+      {list.map((r) => (
+        <div key={r.id} className="flex gap-2">
+          <input
+            className={inputCls + " max-w-[12rem]"}
+            placeholder="Name (optional)"
+            value={r.name ?? ""}
+            onChange={(e) => set(r.id, { name: e.target.value })}
+          />
+          <input
+            className={inputCls}
+            placeholder="email@example.com"
+            value={r.email}
+            onChange={(e) => set(r.id, { email: e.target.value })}
+          />
+          <RemoveBtn onClick={() => onChange(list.filter((x) => x.id !== r.id))} />
+        </div>
+      ))}
+      <div className="flex flex-wrap items-center gap-2">
+        <AddButton
+          label="Add member"
+          onClick={() => onChange([...list, { id: uid(), email: "" }])}
+        />
+        <span className="text-xs text-[var(--studio-muted)]">{list.length} on the list</span>
+      </div>
+      <details className="mt-1">
+        <summary className="cursor-pointer text-xs font-semibold text-[var(--studio-navy)]">
+          Paste a list to add many at once
+        </summary>
+        <textarea
+          className={inputCls + " mt-2"}
+          rows={3}
+          placeholder={"Jane Doe <jane@example.com>\njohn@example.com, mary@example.com"}
+          onBlur={(e) => {
+            addBulk(e.target.value);
+            e.target.value = "";
+          }}
+        />
+        <span className="text-xs text-[var(--studio-muted)]">
+          One per line or comma-separated; “Name &lt;email&gt;” or bare email. Added when you
+          click away.
+        </span>
+      </details>
     </div>
   );
 }

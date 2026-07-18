@@ -1,6 +1,6 @@
 import "server-only";
 import type { Globals, Issue } from "./types";
-import { buildNextDraft, issueTitle, type StoreBackend } from "./storeCore";
+import { buildNextDraft, issueTitle, withGlobalDefaults, type StoreBackend } from "./storeCore";
 import { jsonBackend } from "./backends/json";
 import { postgresBackend } from "./backends/postgres";
 
@@ -20,8 +20,8 @@ export { issueTitle };
 
 // ---- Reads -----------------------------------------------------------------
 
-export function getGlobals(): Promise<Globals> {
-  return backend.getGlobals();
+export async function getGlobals(): Promise<Globals> {
+  return withGlobalDefaults(await backend.getGlobals());
 }
 
 export function listIssues(): Promise<Issue[]> {
