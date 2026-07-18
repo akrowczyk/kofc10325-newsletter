@@ -47,6 +47,18 @@ export async function POST(request: Request): Promise<NextResponse> {
     });
     return NextResponse.json({ url: result.url });
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 400 });
+    const message = (error as Error).message;
+    // The Blob store must be PUBLIC — newsletter photos are shown on public
+    // pages, so private stores (which need signed URLs) won't work here.
+    if (/private (store|access)/i.test(message)) {
+      return NextResponse.json(
+        {
+          error:
+            "Your Vercel Blob store is set to Private. Create a Blob store with Public access and connect it, then redeploy.",
+        },
+        { status: 400 },
+      );
+    }
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }
