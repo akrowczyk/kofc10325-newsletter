@@ -26,6 +26,11 @@
 
   font-family: var(--nl-body);
   color: var(--ink);
+
+  /* Keep the navy/gold branding (masthead, photo section, cards) when printing
+     to PDF, instead of the browser dropping background colors. */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .nl-sheet {

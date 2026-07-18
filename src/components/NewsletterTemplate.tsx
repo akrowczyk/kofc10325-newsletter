@@ -380,7 +380,9 @@ export function NewsletterTemplate({
             <div className="nl-photo-grid">
               {photos.map((ph) => (
                 <div className="nl-frame" key={ph.id}>
-                  <img src={ph.url} alt={ph.caption || "Council photo"} loading="lazy" />
+                  {/* eager (not lazy): lazy images below the fold come out blank
+                      when the reader hits Save as PDF without scrolling to them */}
+                  <img src={ph.url} alt={ph.caption || "Council photo"} />
                 </div>
               ))}
             </div>
