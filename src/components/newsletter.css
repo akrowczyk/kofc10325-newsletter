@@ -474,6 +474,13 @@
 .nl-colophon b {
   color: var(--gold);
 }
+.nl-colophon a {
+  color: var(--gold);
+  text-decoration: none;
+}
+.nl-colophon a:hover {
+  text-decoration: underline;
+}
 
 /* Print: drop the surrounding chrome so "Save as PDF" yields a clean sheet. */
 @media print {

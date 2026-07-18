@@ -1,5 +1,6 @@
 import "./newsletter.css";
 import React from "react";
+import { linkify } from "@/lib/linkify";
 import type { FinancialSection, Globals, Issue } from "@/lib/types";
 import { MONTH_NAMES } from "@/lib/types";
 import {
@@ -20,7 +21,7 @@ function Paragraphs({ text }: { text: string }) {
   return (
     <>
       {parts.map((p, i) => (
-        <p key={i}>{p}</p>
+        <p key={i}>{linkify(p)}</p>
       ))}
     </>
   );
@@ -156,7 +157,7 @@ export function NewsletterTemplate({
                     <h3>Motions Approved</h3>
                     <ul className="nl-list">
                       {issue.motions.map((m, i) => (
-                        <li key={i}>{m}</li>
+                        <li key={i}>{linkify(m)}</li>
                       ))}
                     </ul>
                   </div>
@@ -166,7 +167,7 @@ export function NewsletterTemplate({
             <div>
               <Section title="Grand Knight's Report" show={issue.gkReport.length > 0}>
                 {issue.gkReport.map((p, i) => (
-                  <p key={i}>{p}</p>
+                  <p key={i}>{linkify(p)}</p>
                 ))}
               </Section>
             </div>
@@ -176,13 +177,13 @@ export function NewsletterTemplate({
           <Section title="Grand Knight's Summary" show={issue.gkSummary.length > 0}>
             <ul className="nl-list nl-narrow">
               {issue.gkSummary.map((b, i) => (
-                <li key={i}>{b}</li>
+                <li key={i}>{linkify(b)}</li>
               ))}
             </ul>
           </Section>
           {issue.gkReflection ? (
             <div className="nl-reflection">
-              <p>{issue.gkReflection}</p>
+              <p>{linkify(issue.gkReflection)}</p>
               <span className="attr">— Grand Knight's Reflection</span>
             </div>
           ) : null}
@@ -261,7 +262,7 @@ export function NewsletterTemplate({
               <div className="medal">★</div>
               <p>
                 <b>Knight of the Month — {prevMonthName}:</b>{" "}
-                {issue.knightOfMonth}
+                {linkify(issue.knightOfMonth)}
               </p>
             </div>
           ) : null}
@@ -269,7 +270,7 @@ export function NewsletterTemplate({
           {/* Lecturer reflection */}
           {issue.lecturerReflection.body ? (
             <div className="nl-reflection">
-              <p>{issue.lecturerReflection.body}</p>
+              <p>{linkify(issue.lecturerReflection.body)}</p>
               <span className="attr">
                 — Lecturer's Reflection
                 {issue.lecturerReflection.attribution
@@ -302,7 +303,7 @@ export function NewsletterTemplate({
           {/* Pope intention */}
           {issue.popeIntention ? (
             <div className="nl-reflection" style={{ borderColor: "var(--red)" }}>
-              <p>{issue.popeIntention}</p>
+              <p>{linkify(issue.popeIntention)}</p>
               <span className="attr">— Holy Father's Intention for {monthName}</span>
             </div>
           ) : null}
@@ -347,7 +348,7 @@ export function NewsletterTemplate({
                       {box.entries.map((e) => (
                         <li key={e.id}>
                           {e.when ? <span className="d">{e.when}</span> : null}
-                          {e.text}
+                          {linkify(e.text)}
                         </li>
                       ))}
                     </ul>
@@ -391,7 +392,14 @@ export function NewsletterTemplate({
             <b>{globals.councilName}</b> · Knights of Columbus
           </span>
           <span>
-            {globals.websiteUrl.replace(/^https?:\/\//, "")} · Vivat Jesus!
+            <a
+              href={globals.websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {globals.websiteUrl.replace(/^https?:\/\//, "")}
+            </a>{" "}
+            · Vivat Jesus!
           </span>
         </footer>
       </div>
