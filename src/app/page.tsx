@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listIssues, getGlobals, issueTitle } from "@/lib/store";
 import { SiteHeader } from "@/components/SiteHeader";
+import { DeleteIssueButton } from "./DeleteIssueButton";
 import { startNextIssueAction } from "./actions";
 
 // Read the store (and env-selected backend) at request time, not build time.
@@ -73,6 +74,7 @@ export default async function Dashboard() {
               >
                 Edit
               </Link>
+              <DeleteIssueButton slug={issue.slug} title={issueTitle(issue)} />
             </div>
           </div>
         ))}
