@@ -482,11 +482,40 @@
   text-decoration: underline;
 }
 
-/* Print: drop the surrounding chrome so "Save as PDF" yields a clean sheet. */
+/* Print: drop the surrounding chrome so "Save as PDF" yields a clean sheet, and
+   control page breaks so sections don't split awkwardly. */
 @media print {
   .nl-sheet {
     box-shadow: none;
     border: none;
     border-radius: 0;
+  }
+
+  /* Keep a section heading with the content that follows it. */
+  .nl-h2 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* Don't split these boxes across a page boundary. */
+  .nl-card,
+  .nl-reflection,
+  .nl-badge,
+  .nl-ledger,
+  .nl-calendar,
+  .nl-cal-row,
+  .nl-prayer,
+  .nl-officers,
+  .nl-congrats .box,
+  .nl-frame {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Avoid stranded single lines at the top/bottom of a page. */
+  .nl-body p,
+  .nl-reflection p {
+    orphans: 3;
+    widows: 3;
   }
 }
