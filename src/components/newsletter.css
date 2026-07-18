@@ -427,35 +427,30 @@
   color: var(--gold);
   border-color: var(--gold);
 }
+/* Masonry columns: each photo keeps its natural proportions (no cropping),
+   and portrait/landscape mixes flow together without ugly gaps. */
 .nl-photo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
+  columns: 2;
+  column-gap: 10px;
   margin-top: 12px;
 }
+@media (max-width: 520px) {
+  .nl-photo-grid {
+    columns: 1;
+  }
+}
 .nl-frame {
-  aspect-ratio: 4 / 3;
+  break-inside: avoid;
+  margin: 0 0 10px;
   border: 1px solid rgba(247, 183, 24, 0.4);
   border-radius: 8px;
-  background: repeating-linear-gradient(
-    45deg,
-    #1a2f63,
-    #1a2f63 12px,
-    #14275a 12px,
-    #14275a 24px
-  );
-  display: grid;
-  place-items: center;
-  color: #9fb0d4;
-  font-size: 12px;
-  letter-spacing: 1px;
-  font-family: var(--nl-label);
   overflow: hidden;
+  background: #14275a;
 }
 .nl-frame img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
 }
 
 .nl-colophon {

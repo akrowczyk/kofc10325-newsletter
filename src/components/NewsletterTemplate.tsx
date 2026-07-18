@@ -380,7 +380,7 @@ export function NewsletterTemplate({
             <div className="nl-photo-grid">
               {photos.map((ph) => (
                 <div className="nl-frame" key={ph.id}>
-                  <img src={ph.url} alt={ph.caption || "Council photo"} />
+                  <img src={ph.url} alt={ph.caption || "Council photo"} loading="lazy" />
                 </div>
               ))}
             </div>
