@@ -2,7 +2,6 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { upload } from "@vercel/blob/client";
 import type {
   CalendarEvent,
   CongratsBox,
@@ -18,6 +17,36 @@ import { NewsletterTemplate } from "@/components/NewsletterTemplate";
 import { saveIssueAction, publishIssueAction } from "@/app/actions";
 
 const uid = () => Math.random().toString(36).slice(2, 9);
+
+// Downscale/re-encode an image in the browser before upload: keeps files small
+// (well under the serverless body limit), fixes EXIF rotation, and yields a
+// web-friendly JPEG. Falls back to the original file if the browser can't decode
+// it (e.g. some HEIC files).
+async function downscaleImage(
+  file: File,
+  maxDim = 1600,
+): Promise<{ data: Blob; filename: string }> {
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+    const w = Math.max(1, Math.round(bitmap.width * scale));
+    const h = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("no canvas context");
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close?.();
+    const data = await new Promise<Blob | null>((res) =>
+      canvas.toBlob(res, "image/jpeg", 0.85),
+    );
+    if (!data) throw new Error("encode failed");
+    return { data, filename: file.name.replace(/\.[^.]+$/, "") + ".jpg" };
+  } catch {
+    return { data: file, filename: file.name };
+  }
+}
 
 // Strip blank list entries so the preview and published page never show empty
 // bullets/rows while the author is mid-edit.
@@ -615,11 +644,18 @@ function PhotosEditor({
     try {
       const added: PhotoItem[] = [];
       for (const file of Array.from(files)) {
-        const result = await upload(file.name, file, {
-          access: "public",
-          handleUploadUrl: "/api/photos/upload",
+        const { data, filename } = await downscaleImage(file);
+        const res = await fetch(`/api/photos/upload?filename=${encodeURIComponent(filename)}`, {
+          method: "POST",
+          headers: { "content-type": data.type || "image/jpeg" },
+          body: data,
         });
-        added.push({ id: uid(), caption: "", url: result.url });
+        if (!res.ok) {
+          const msg = await res.json().catch(() => ({}));
+          throw new Error(msg.error || `Upload failed (${res.status})`);
+        }
+        const { url } = (await res.json()) as { url: string };
+        added.push({ id: uid(), caption: "", url });
       }
       onChange([...photos, ...added]);
     } catch (e) {
